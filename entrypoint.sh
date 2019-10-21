@@ -13,9 +13,13 @@ function main() {
     INPUT_NAME="${REGISTRY_NO_PROTOCOL}/${INPUT_NAME}"
   fi
 
-  translateDockerTag
-  DOCKERNAME="${INPUT_NAME}:${TAG}"
-
+  # translateDockerTag
+  DOCKERNAME="${INPUT_NAME}"
+  TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+  if [ "$tag" == "latest" ]; then
+    TAG=$(git describe --tags `git rev-list --tags --max-count=2` | tail -n 1)
+  fi
+  
   if uses "${INPUT_WORKDIR}"; then
     changeWorkingDirectory
   fi
@@ -119,15 +123,23 @@ function pushWithSnapshot() {
   local SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-6)
   local SNAPSHOT_TAG="${TIMESTAMP}${SHORT_SHA}"
   local SHA_DOCKER_NAME="${INPUT_NAME}:${SNAPSHOT_TAG}"
-  docker build $BUILDPARAMS -t ${DOCKERNAME} -t ${SHA_DOCKER_NAME} .
-  docker push ${DOCKERNAME}
+  docker build $BUILDPARAMS -t ${DOCKERNAME}:latest -t ${DOCKERNAME}:${TAG} -t ${SHA_DOCKER_NAME} .
+  docker push ${DOCKERNAME}:latest
   docker push ${SHA_DOCKER_NAME}
+  if ! DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ${DOCKERNAME}:${TAG} > /dev/null; then
+  	docker push ${DOCKERNAME}:${TAG}
+	echo ::pushed version: ${TAG}
+  fi
   echo ::set-output name=snapshot-tag::"${SNAPSHOT_TAG}"
 }
 
 function pushWithoutSnapshot() {
-  docker build $BUILDPARAMS -t ${DOCKERNAME} .
-  docker push ${DOCKERNAME}
+  docker build $BUILDPARAMS -t ${DOCKERNAME}:latest -t ${DOCKERNAME}:${TAG} .
+  docker push ${DOCKERNAME}:latest
+  if ! DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ${DOCKERNAME}:${TAG} > /dev/null; then
+  	docker push ${DOCKERNAME}:${TAG}
+	echo ::pushed version: ${TAG}
+  fi
 }
 
 main
