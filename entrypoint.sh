@@ -16,7 +16,7 @@ function main() {
   # translateDockerTag
   DOCKERNAME="${INPUT_NAME}"
   TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-  if [ "$tag" == "latest" ]; then
+  if [ "$TAG" == "latest" ]; then
     TAG=$(git describe --tags `git rev-list --tags --max-count=2` | tail -n 1)
   fi
   
