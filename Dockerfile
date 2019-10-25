@@ -14,6 +14,6 @@ RUN apk add --no-cache coreutils bats ncurses
 ADD test.bats /test.bats
 ADD stub.sh /usr/local/bin/docker
 ADD mock.sh /usr/bin/date
-RUN /test.bats
+#RUN /test.bats
 
 FROM runtime
