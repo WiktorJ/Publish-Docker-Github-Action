@@ -136,6 +136,7 @@ function pushWithSnapshot() {
 function pushWithoutSnapshot() {
   docker build $BUILDPARAMS -t ${DOCKERNAME}:latest -t ${DOCKERNAME}:${TAG} .
   docker push ${DOCKERNAME}:latest
+  echo ::docker name: ${DOCKERNAME} and tag: ${TAG}
   if ! DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ${DOCKERNAME}:${TAG} > /dev/null; then
   	docker push ${DOCKERNAME}:${TAG}
 	echo ::pushed version: ${TAG}
