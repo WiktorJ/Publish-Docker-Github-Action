@@ -15,12 +15,11 @@ function main() {
 
   # translateDockerTag
   DOCKERNAME="${INPUT_NAME}"
-  TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+  TAG=$(git tag --sort=-creatordate | head -n 1)
   if [ "$TAG" == "latest" ]; then
-    TAG=$(git describe --tags `git rev-list --tags --max-count=2` | tail -n 1)
-    echo ::TAG after git call: ${TAG} 
-    git describe --tags `git rev-list --tags --max-count=2` | tail -n 1
+    TAG=$(git tag --sort=-creatordate | head -n 2 | tail -n 1)
   fi
+  echo ::TAG after git call: ${TAG} 
   
   if uses "${INPUT_WORKDIR}"; then
     changeWorkingDirectory
