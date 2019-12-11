@@ -3,6 +3,7 @@ set -e
 
 function main() {
   echo "" # see https://github.com/actions/toolkit/issues/168
+  git status
 
   sanitize "${INPUT_NAME}" "name"
   sanitize "${INPUT_USERNAME}" "username"
