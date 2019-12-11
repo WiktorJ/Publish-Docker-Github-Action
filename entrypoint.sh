@@ -3,8 +3,9 @@ set -e
 
 function main() {
   echo "" # see https://github.com/actions/toolkit/issues/168
-  git status
-
+  echo "---"
+  git tag --sort=-creatordate | cat 
+  echo "---"
   sanitize "${INPUT_NAME}" "name"
   sanitize "${INPUT_USERNAME}" "username"
   sanitize "${INPUT_PASSWORD}" "password"
