@@ -3,14 +3,7 @@ set -e
 
 function main() {
   echo "" # see https://github.com/actions/toolkit/issues/168
-  echo "---"
   git fetch --tags origin
-  git tag --sort=-creatordate | cat 
-  git remote -v 
-  git branch | cat
-  git status
-  echo "---"
-
   sanitize "${INPUT_NAME}" "name"
   sanitize "${INPUT_USERNAME}" "username"
   sanitize "${INPUT_PASSWORD}" "password"
